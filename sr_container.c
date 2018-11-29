@@ -179,6 +179,24 @@ int main(int argc, char **argv)
      * HINT: Note that the 'child_function' expects struct of type child_config.
      * ------------------------------------------------------
      **/
+    
+    char *stack;                        /* Start of stack buffer area */
+    char *stackTop;                     /* End of stack buffer area */
+    int flags;
+    //pid_t child_pid;
+    
+    stack = malloc(STACK_SIZE);
+    if (stack == NULL)
+         perror("MALLOC");
+        exit(EXIT_FAILURE);
+    
+    
+    flags = CLONE_NEWCGROUP;
+    
+    stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
+    clone (child_function, stackTop, flags | SIGCHLD, argv);
+
+
 
         // You code for clone() goes here
 
