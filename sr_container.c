@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     pid_t child_pid = 0;
     int last_optind = 0;
     bool found_cflag = false;
-    while ((option = getopt(argc, argv, "c:m:u:")))
+    while ((option = getopt(argc, argv, "c:m:u:H")))
     {
         if (found_cflag)
             break;
@@ -98,8 +98,8 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
             break;
-        case 'C':
-            
+        case 'H':
+            config.hostname = optarg;
             break;
         default:
             cleanup_stuff(argv, sockets);
@@ -194,10 +194,10 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     
     
-    //flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS;
+    flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS;
     
-    //stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
-    //child_pid = clone(child_function, stackTop, flags | SIGCHLD, &config);
+    stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
+    child_pid = clone(child_function, stackTop, flags | SIGCHLD, (void *)&config);
 
 
 

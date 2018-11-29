@@ -4,13 +4,14 @@
 # @compilation:   Use "make container" 
 
 CC=gcc
-LIBS=-lseccomp -lcap
+LIBS=-lseccomp -lcap 
 CFLAGS=-g -Wall -Werror
 SOURCE1=sr_container.c sr_container_helpers.c sr_container_utils.c
 EXEC1=SNR_CONTAINER 
+# -D_GNU_SOURCE
 
 container: $(SOURCE1)
-	$(CC) -D_GNU_SOURCE -o $(EXEC1) $(CFLAGS) $(SOURCE1) $(LIBS)
+	$(CC) -o $(EXEC1) $(CFLAGS) $(SOURCE1) $(LIBS)
 
 clean:
 	rm $(EXEC1)

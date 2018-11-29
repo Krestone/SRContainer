@@ -4,9 +4,10 @@
  *  @purpose    :   COMP310/ECSE427 Operating Systems (Assingment 3) - Phase 2
  *  @description:   Header file for the template C code of A3
 */
+#define _GNU_SOURCE
+
 #ifndef __SRCONTAINER__
 #define __SRCONTAINER__
-//#define _GNU_SOURCE
 
 
 #include <errno.h>
