@@ -98,6 +98,9 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
             break;
+        case 'C':
+            
+            break;
         default:
             cleanup_stuff(argv, sockets);
             return EXIT_FAILURE;
@@ -187,14 +190,14 @@ int main(int argc, char **argv)
     
     stack = malloc(STACK_SIZE);
     if (stack == NULL)
-         perror("MALLOC");
+        perror("MALLOC");
         exit(EXIT_FAILURE);
     
     
-    flags = CLONE_NEWCGROUP;
+    //flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS;
     
-    stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
-    clone (child_function, stackTop, flags | SIGCHLD, argv);
+    //stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
+    //child_pid = clone(child_function, stackTop, flags | SIGCHLD, &config);
 
 
 
