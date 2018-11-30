@@ -189,10 +189,10 @@ int main(int argc, char **argv)
     
     
     stack = malloc(STACK_SIZE);
-    if (stack == NULL)
+    if(stack == NULL) {
         perror("MALLOC");
         exit(EXIT_FAILURE);
-    
+    }
     
     flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS;
     
