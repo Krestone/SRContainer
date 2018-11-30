@@ -7,7 +7,8 @@ CC=gcc
 LIBS=-lseccomp -lcap 
 CFLAGS=-g -Wall -Werror
 SOURCE1=sr_container.c sr_container_helpers.c sr_container_utils.c
-EXEC1=SNR_CONTAINER 
+EXEC1=SNR_CONTAINER
+TEST1=SNR_CONTAINER_TEST  
 # -D_GNU_SOURCE
 
 container: $(SOURCE1)
@@ -15,3 +16,6 @@ container: $(SOURCE1)
 
 clean:
 	rm $(EXEC1)
+test:
+	$(CC) -g -o $(TEST1) $(CFLAGS) $(SOURCE1) $(LIBS)
+

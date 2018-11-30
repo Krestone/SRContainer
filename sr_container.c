@@ -29,7 +29,7 @@ struct cgroup_setting self_to_task = {
  *      in the comments for the main() below
  *  ------------------------------------------------------
  **/ 
-struct cgroups_control *cgroups[5] = {
+struct cgroups_control *cgroups[6] = {
 	& (struct cgroups_control) {
 		.control = CGRP_BLKIO_CONTROL,
 		.settings = (struct cgroup_setting *[]) {
@@ -99,7 +99,12 @@ int main(int argc, char **argv)
             }
             break;
         case 'H':
-            config.hostname = optarg;
+            if (sscanf(optarg, "%s", config.hostname) != 1)
+            {
+                fprintf(stderr, "Hostname not as expected: %s\n", optarg);
+                cleanup_stuff(argv, sockets);
+                return EXIT_FAILURE;
+            }
             break;
         default:
             cleanup_stuff(argv, sockets);
