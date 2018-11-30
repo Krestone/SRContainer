@@ -107,6 +107,7 @@ int main(int argc, char **argv)
             
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
+            strcpy(mem_setting->value,"1024");
             
             mem->settings = &mem_setting;
 
