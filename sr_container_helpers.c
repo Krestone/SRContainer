@@ -260,7 +260,8 @@ int setup_child_uid_map(pid_t child_pid, int fd)
 int setup_child_userns(struct child_config *config)
 {
     fprintf(stderr, "####### > attempting a new user namespace...");
-    int has_userns = !unshare(CLONE_NEWUSER);
+    //int has_userns = !unshare(CLONE_NEWUSER);
+    int has_userns = 1;
     if (write(config->fd, &has_userns, sizeof(has_userns)) != sizeof(has_userns))
     {
         fprintf(stderr, "write() inside child failed: %m\n");

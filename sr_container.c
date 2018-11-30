@@ -186,7 +186,7 @@ int main(int argc, char **argv)
     char *stack;                        /* Start of stack buffer area */
     char *stackTop;                     /* End of stack buffer area */
     int flags;
-    //pid_t child_pid;
+    
     
     stack = malloc(STACK_SIZE);
     if (stack == NULL)
