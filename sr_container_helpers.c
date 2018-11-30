@@ -219,11 +219,12 @@ int setup_child_uid_map(pid_t child_pid, int fd)
 {
     int uid_map = 0;
     int has_userns = -1;
-    if (read(fd, &has_userns, sizeof(has_userns)) != sizeof(has_userns))
-    {
-        fprintf(stderr, "read() attempt from child failed!\n");
-        return -1;
-    }
+    //if (read(fd, &has_userns, sizeof(has_userns)) != sizeof(has_userns))
+    //{
+    //    fprintf(stderr, "read() attempt from child failed!\n");
+    //    return -1;
+    //}
+    has_userns = fd;
     if (has_userns)
     {
         char path[PATH_MAX] = {0};
@@ -260,8 +261,7 @@ int setup_child_uid_map(pid_t child_pid, int fd)
 int setup_child_userns(struct child_config *config)
 {
     fprintf(stderr, "####### > attempting a new user namespace...");
-    //int has_userns = !unshare(CLONE_NEWUSER);
-    int has_userns = 1;
+    int has_userns = !unshare(CLONE_NEWUSER);
     if (write(config->fd, &has_userns, sizeof(has_userns)) != sizeof(has_userns))
     {
         fprintf(stderr, "write() inside child failed: %m\n");

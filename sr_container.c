@@ -99,12 +99,7 @@ int main(int argc, char **argv)
             }
             break;
         case 'H':
-            if (sscanf(optarg, "%s", config.hostname) != 1)
-            {
-                fprintf(stderr, "Hostname not as expected: %s\n", optarg);
-                cleanup_stuff(argv, sockets);
-                return EXIT_FAILURE;
-            }
+            config.hostname = optarg;
             break;
         default:
             cleanup_stuff(argv, sockets);
@@ -199,7 +194,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     
-    flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS;
+    flags = CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWNET;
     
     stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
     child_pid = clone(child_function, stackTop, flags | SIGCHLD, (void *)&config);
