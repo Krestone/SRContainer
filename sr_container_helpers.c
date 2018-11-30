@@ -224,6 +224,7 @@ int setup_child_uid_map(pid_t child_pid, int fd)
     //    fprintf(stderr, "read() attempt from child failed!\n");
     //    return -1;
     //}
+    // I couldn't get shabir's code of copying into e/ read work. so I just assign it directly
     has_userns = fd;
     if (has_userns)
     {
