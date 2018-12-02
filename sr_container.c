@@ -103,28 +103,21 @@ int main(int argc, char **argv)
             break;
         case 'M': ;
             struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
-            
             struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
+            struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
+
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
             strcpy(mem_setting->value,"1024");
-            
-            struct cgroup_setting *(mem_settings[3]);
 
-            for(int i = 0; i < 3; i++){
-	            mem_settings[i] = malloc(sizeof(struct cgroup_setting));
-            }
-            
-            (mem->settings) = mem_settings;
-           
-            mem->settings[0] = mem_setting;
-            mem->settings[1] = &self_to_task;
-            mem->settings[2] = NULL;
-            
-           
+            *(mem_settings) = mem_setting;
+            *(mem_settings+1) = &self_to_task;
+            *(mem_settings+2) = NULL;
 
+            mem->settings= mem_settings;
             cgroups[1] = mem;
             break;
+
         default:
             cleanup_stuff(argv, sockets);
             return EXIT_FAILURE;
