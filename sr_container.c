@@ -106,9 +106,10 @@ int main(int argc, char **argv)
             struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
             struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
             
+
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
-            strcpy(mem_setting->value,"102400000");
+            strcpy(mem_setting->value,"1024000");
             
             *(mem_settings) = mem_setting;
 	    *(mem_settings+1) = &self_to_task;
