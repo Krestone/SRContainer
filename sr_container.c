@@ -103,13 +103,25 @@ int main(int argc, char **argv)
             break;
         case 'M': ;
             struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
-            struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
             
+            struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
             strcpy(mem_setting->value,"1024");
             
-            mem->settings = &mem_setting;
+            struct cgroup_setting *(mem_settings[3]);
+
+            for(int i = 0; i < 3; i++){
+	            mem_settings[i] = malloc(sizeof(struct cgroup_setting));
+            }
+            
+            (mem->settings) = mem_settings;
+           
+            mem->settings[0] = mem_setting;
+            mem->settings[1] = &self_to_task;
+            mem->settings[2] = NULL;
+            
+           
 
             cgroups[1] = mem;
             break;
@@ -127,12 +139,12 @@ int main(int argc, char **argv)
 
     fprintf(stderr, "####### > Checking if the host Linux version is compatible...");
     struct utsname host = {0};
-    if (uname(&host))
+    /*if (uname(&host))
     {
         fprintf(stderr, "invocation to uname() failed: %m\n");
         cleanup_sockets(sockets);
         return EXIT_FAILURE;
-    }
+    }*/
     int major = -1;
     int minor = -1;
     if (sscanf(host.release, "%u.%u.", &major, &minor) != 2)
