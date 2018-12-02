@@ -104,7 +104,7 @@ int main(int argc, char **argv)
         case 'M': ;
             struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
             struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
-	    struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
+            struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
             
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
@@ -117,6 +117,7 @@ int main(int argc, char **argv)
 	    mem->settings= mem_settings;	    
             cgroups[1] = mem;
             break;
+
         default:
             cleanup_stuff(argv, sockets);
             return EXIT_FAILURE;
