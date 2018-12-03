@@ -38,6 +38,44 @@ int setup_child_capabilities()
      *      will indicate many capabilities. But after properly implementing this method if you run the same
      *      command inside your container you will see a smaller set of capabilities for [Bounding set]
      **/
+    
+    // STEP 1 dropping capability from AMBIENT set
+    int drop_caps[] = {CAP_MKNOD, CAP_SYS_BOOT};
+    size_t num_caps_to_drop = 2;
+
+    for(size_t i =0; i< num_caps_to_drop; i++){
+        if(prctl(PR_CAPBSET_DROP, drop_caps[i], 0 ,0 ,0)){
+            fprintf(stderr, "prtcl failed: %m\n");
+            return 1;
+        }
+    }
+
+    cap_t caps = cap_get_proc();
+    if(caps == NULL){
+        perror("cap_get_proc");
+        if(caps){
+            cap_free(caps);
+        }
+        return EXIT_FAILURE;
+    }
+
+    //STEP 2 Now from the above caps, clear out 3 capabilities from the INHERITABLE set.
+    int clear_inh_set = cap_set_flag(caps, CAP_INHERITABLE, num_caps_to_drop, drop_caps, CAP_CLEAR);
+    if(clear_inh_set){
+        perror("cap_Set_flag");
+        cap_free(caps);
+        return EXIT_FAILURE;
+    }
+
+    //now set the cleared caps-structure as the processes new capability set
+    int set_cap_set = cap_set_proc(caps);
+    if(set_cap_set){
+        perror("cap_set_proc");
+        cap_free(caps);
+        return EXIT_FAILURE;
+    }
+    cap_free(caps);  
+
     return 0;
 }
 
