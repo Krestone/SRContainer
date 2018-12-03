@@ -86,6 +86,10 @@ int main(int argc, char **argv)
         struct cgroups_control* pid = malloc(sizeof(struct cgroups_control));
         struct cgroup_setting* pid_setting = malloc(sizeof(struct cgroup_setting));
         struct cgroup_setting** pid_settings = malloc(sizeof(struct cgroup_setting *));
+
+        struct cgroups_control* cpu = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* cpu_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** cpu_settings = malloc(sizeof(struct cgroup_setting *));
     
         if (found_cflag)
             break;
@@ -135,6 +139,18 @@ int main(int argc, char **argv)
 
             pid->settings= pid_settings;
             cgroups[2] = pid;
+            break;
+        case 'C':
+            strcpy(cpu->control,CGRP_CPU_CONTROL);
+            strcpy(cpu_setting->name,"cpu.shares");
+            strcpy(cpu_setting->value, optarg);
+            
+            *(cpu_settings) = cpu_setting;
+            *(cpu_settings+1) = &self_to_task;
+            *(cpu_settings+2) = NULL;
+
+            cpu->settings= cpu_settings;
+            cgroups[3] = cpu;
             break;
         default:
             cleanup_stuff(argv, sockets);
