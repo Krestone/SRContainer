@@ -75,13 +75,17 @@ int main(int argc, char **argv)
     pid_t child_pid = 0;
     int last_optind = 0;
     bool found_cflag = false;
-    while ((option = getopt(argc, argv, "c:m:u:H:M:")))
+    while ((option = getopt(argc, argv, "c:m:u:H:M:p:")))
     {
 
 
-	struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
+	    struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
         struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
         struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
+
+        struct cgroups_control* pid = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* pid_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** pid_settings = malloc(sizeof(struct cgroup_setting *));
     
         if (found_cflag)
             break;
@@ -114,11 +118,23 @@ int main(int argc, char **argv)
             strcpy(mem_setting->value, optarg);
             
             *(mem_settings) = mem_setting;
-	    *(mem_settings+1) = &self_to_task;
-	    *(mem_settings+2) = NULL;
+	        *(mem_settings+1) = &self_to_task;
+	        *(mem_settings+2) = NULL;
  
-	    mem->settings= mem_settings;	    
+     	    mem->settings= mem_settings;	    
             cgroups[1] = mem;
+            break;
+        case 'p':
+            strcpy(pid->control,CGRP_PIDS_CONTROL);
+            strcpy(pid_setting->name,"pids.max");
+            strcpy(pid_setting->value, optarg);
+            
+            *(pid_settings) = pid_setting;
+            *(pid_settings+1) = &self_to_task;
+            *(pid_settings+2) = NULL;
+
+            pid->settings= pid_settings;
+            cgroups[2] = pid;
             break;
         default:
             cleanup_stuff(argv, sockets);
