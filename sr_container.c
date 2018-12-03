@@ -77,6 +77,12 @@ int main(int argc, char **argv)
     bool found_cflag = false;
     while ((option = getopt(argc, argv, "c:m:u:H:M")))
     {
+
+
+	struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
+    
         if (found_cflag)
             break;
 
@@ -101,15 +107,11 @@ int main(int argc, char **argv)
         case 'H':
             config.hostname = optarg;
             break;
-        case 'M': ;
-            struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
-            struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
-            struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
-            
-
+        case 'M':
+	     
             strcpy(mem->control,CGRP_MEMORY_CONTROL);
             strcpy(mem_setting->name,"memory.limit_in_bytes");
-            strcpy(mem_setting->value,"1024000");
+            strcpy(mem_setting->value, optarg);
             
             *(mem_settings) = mem_setting;
 	    *(mem_settings+1) = &self_to_task;
@@ -118,7 +120,6 @@ int main(int argc, char **argv)
 	    mem->settings= mem_settings;	    
             cgroups[1] = mem;
             break;
-
         default:
             cleanup_stuff(argv, sockets);
             return EXIT_FAILURE;
