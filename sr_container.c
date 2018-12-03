@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     pid_t child_pid = 0;
     int last_optind = 0;
     bool found_cflag = false;
-    while ((option = getopt(argc, argv, "c:m:u:H:M")))
+    while ((option = getopt(argc, argv, "c:m:u:H:M:")))
     {
 
 
