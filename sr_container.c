@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     pid_t child_pid = 0;
     int last_optind = 0;
     bool found_cflag = false;
-    while ((option = getopt(argc, argv, "c:m:u:H:M:p:C:")))
+    while ((option = getopt(argc, argv, "c:m:u:H:M:p:C:s:")))
     {
 
 
@@ -91,14 +91,11 @@ int main(int argc, char **argv)
         struct cgroup_setting* cpu_setting = malloc(sizeof(struct cgroup_setting));
         struct cgroup_setting** cpu_settings = malloc(sizeof(struct cgroup_setting *));
 
-        //struct cgroups_control* cpu_set = malloc(sizeof(struct cgroups_control));
-        //struct cgroup_setting* cpu_set_setting = malloc(sizeof(struct cgroup_setting));
-        //struct cgroup_setting** cpu_set_settings = malloc(sizeof(struct cgroup_setting *));
+        struct cgroups_control* cpu_set = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* cpu_set_setting = malloc(sizeof(struct cgroup_setting));
+//        struct cgroup_setting* cpu_set_mem_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** cpu_set_settings = malloc(sizeof(struct cgroup_setting *));
 
-        //struct cgroups_control* cpu_set_mem = malloc(sizeof(struct cgroups_control));
-        //struct cgroup_setting* cpu_set_mem_setting = malloc(sizeof(struct cgroup_setting));
-        //struct cgroup_setting** cpu_set_mem_settings = malloc(sizeof(struct cgroup_setting *));
-    
         if (found_cflag)
             break;
 
@@ -160,6 +157,28 @@ int main(int argc, char **argv)
             cpu->settings= cpu_settings;
             cgroups[3] = cpu;
             break;
+
+        case 's':
+            strcpy(cpu_set->control,CGRP_CPU_SET_CONTROL);
+            strcpy(cpu_set_setting->name,"cpuset.cpus");
+            strcpy(cpu_set_setting->value, optarg);
+
+            *(cpu_set_settings) = cpu_set_setting;
+
+            struct cgroup_setting* cpu_set_mem_setting = malloc(sizeof(struct cgroup_setting));
+            strcpy(cpu_set_mem_setting->name,"cpuset.mems");
+            strcpy(cpu_set_mem_setting->value,"0-1");
+            
+            //strcpy((*(cpu_set_settings+1))->name, "cpuset.mems");
+            //strcpy((*(cpu_set_settings+1))->value, "0-1");
+            *(cpu_set_settings+1)=cpu_set_mem_setting;
+            *(cpu_set_settings+2)=&self_to_task;
+            *(cpu_set_settings+3)=NULL;
+
+            cpu_set->settings= cpu_set_settings;
+            cgroups[4] = cpu_set;
+            break;
+
 
 /*        case 's':
             strcpy(cpu_set->control,CGRP_CPU_SET_CONTROL);
