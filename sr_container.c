@@ -75,14 +75,27 @@ int main(int argc, char **argv)
     pid_t child_pid = 0;
     int last_optind = 0;
     bool found_cflag = false;
-    while ((option = getopt(argc, argv, "c:m:u:H:M:")))
+    while ((option = getopt(argc, argv, "c:m:u:H:M:p:C:s:")))
     {
 
 
-	struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
+	    struct cgroups_control* mem = malloc(sizeof(struct cgroups_control));
         struct cgroup_setting* mem_setting = malloc(sizeof(struct cgroup_setting));
         struct cgroup_setting** mem_settings = malloc(sizeof(struct cgroup_setting *));
-    
+
+        struct cgroups_control* pid = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* pid_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** pid_settings = malloc(sizeof(struct cgroup_setting *));
+
+        struct cgroups_control* cpu = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* cpu_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** cpu_settings = malloc(sizeof(struct cgroup_setting *));
+
+        struct cgroups_control* cpu_set = malloc(sizeof(struct cgroups_control));
+        struct cgroup_setting* cpu_set_setting = malloc(sizeof(struct cgroup_setting));
+//        struct cgroup_setting* cpu_set_mem_setting = malloc(sizeof(struct cgroup_setting));
+        struct cgroup_setting** cpu_set_settings = malloc(sizeof(struct cgroup_setting *));
+
         if (found_cflag)
             break;
 
@@ -114,12 +127,78 @@ int main(int argc, char **argv)
             strcpy(mem_setting->value, optarg);
             
             *(mem_settings) = mem_setting;
-	    *(mem_settings+1) = &self_to_task;
-	    *(mem_settings+2) = NULL;
+	        *(mem_settings+1) = &self_to_task;
+	        *(mem_settings+2) = NULL;
  
-	    mem->settings= mem_settings;	    
+     	    mem->settings= mem_settings;	    
             cgroups[1] = mem;
             break;
+        case 'p':
+            strcpy(pid->control,CGRP_PIDS_CONTROL);
+            strcpy(pid_setting->name,"pids.max");
+            strcpy(pid_setting->value, optarg);
+            
+            *(pid_settings) = pid_setting;
+            *(pid_settings+1) = &self_to_task;
+            *(pid_settings+2) = NULL;
+
+            pid->settings= pid_settings;
+            cgroups[2] = pid;
+            break;
+        case 'C':
+            strcpy(cpu->control,CGRP_CPU_CONTROL);
+            strcpy(cpu_setting->name,"cpu.shares");
+            strcpy(cpu_setting->value, optarg);
+            
+            *(cpu_settings) = cpu_setting;
+            *(cpu_settings+1) = &self_to_task;
+            *(cpu_settings+2) = NULL;
+
+            cpu->settings= cpu_settings;
+            cgroups[3] = cpu;
+            break;
+
+        case 's':
+            strcpy(cpu_set->control,CGRP_CPU_SET_CONTROL);
+            strcpy(cpu_set_setting->name,"cpuset.cpus");
+            strcpy(cpu_set_setting->value, optarg);
+
+            *(cpu_set_settings) = cpu_set_setting;
+
+            struct cgroup_setting* cpu_set_mem_setting = malloc(sizeof(struct cgroup_setting));
+            strcpy(cpu_set_mem_setting->name,"cpuset.mems");
+            strcpy(cpu_set_mem_setting->value,"0-1");
+            
+            //strcpy((*(cpu_set_settings+1))->name, "cpuset.mems");
+            //strcpy((*(cpu_set_settings+1))->value, "0-1");
+            *(cpu_set_settings+1)=cpu_set_mem_setting;
+            *(cpu_set_settings+2)=&self_to_task;
+            *(cpu_set_settings+3)=NULL;
+
+            cpu_set->settings= cpu_set_settings;
+            cgroups[4] = cpu_set;
+            break;
+
+
+/*        case 's':
+            strcpy(cpu_set->control,CGRP_CPU_SET_CONTROL);
+            strcpy(cpu_set_setting->name,"cpuset.cpus");
+            strcpy(cpu_set_setting->value, optarg);
+
+            //strcpy(*(cpu_set_settings+1)->name, "cpuset.mems")
+            //strcp(*(cpu_set_settings+1)-> value, "0-1")
+            // *(cpu_set_settings+2)=self to task
+            // *(cpu_set_settings+3)=NULL
+
+            *(cpu_set_settings) = cpu_set_setting;
+            *(cpu_set_settings+1) = &self_to_task;
+            *(cpu_set_settings+2) = NULL;
+
+            cpu_set->settings= cpu_set_settings;
+            cgroups[4] = cpu_set;
+
+
+            break;*/
         default:
             cleanup_stuff(argv, sockets);
             return EXIT_FAILURE;
