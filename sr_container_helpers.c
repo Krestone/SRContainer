@@ -92,7 +92,7 @@ int setup_syscall_filters()
 {
     scmp_filter_ctx seccomp_ctx = seccomp_init(SCMP_ACT_ALLOW);
     
-    if (!sccomp_ctx) {
+    if (!seccomp_ctx) {
         fprintf(stderr, "seccomp initialization failed: %m\n");
         return EXIT_FAILURE;
     }
@@ -105,7 +105,7 @@ int setup_syscall_filters()
     );
 
      
-    if (fillter_set_status) {
+    if (filter_set_status) {
         if (seccomp_ctx){
             seccomp_release(seccomp_ctx);
         }
