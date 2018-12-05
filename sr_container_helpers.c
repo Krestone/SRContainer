@@ -162,36 +162,6 @@ int setup_syscall_filters()
         return EXIT_FAILURE;
     }
 
-    filter_set_status = seccomp_rule_add(seccomp_ctx, SCMP_FAIL, SCMP_SYS(clone), 0);
-    
-    if (filter_set_status) {
-        
-        if (seccomp_ctx) {
-            seccomp_release(seccomp_ctx);
-        }
-        fprintf(stderr, "seccomp could not add KILL rule for 'clone': %m\n");
-        return EXIT_FAILURE;   
-    }
-
-    filter_set_status = seccomp_attr_set(seccomp_ctx, SCMP_FLTATR_CTL_NNP, 0);
-    
-    if (filter_set_status){
-        if (seccomp_ctx){
-            seccomp_release(seccomp_ctx);
-        }
-        fprintf(stderr, "seccomp could not set attribute 'SCMP_FLTATR_CTL_NNP'; %m\n");
-        return EXIT_FAILURE;
-    }
-    
-    filter_set_status = seccomp_load(seccomp_ctx);
-    if (filter_set_status){
-        if (seccomp_ctx){
-            seccomp_release(seccomp_ctx);
-        }
-        fprintf(stderr, "seccomp could not load the new context: %m\n");
-        return EXIT_FAILURE;
-    }
-
     filter_set_status = seccomp_rule_add(
         seccomp_ctx,
         SCMP_FAIL,
@@ -228,6 +198,42 @@ int setup_syscall_filters()
         return EXIT_FAILURE;
     }
     
+    filter_set_status = seccomp_rule_add(
+        seccomp_ctx,
+        SCMP_FAIL,
+        SCMP_SYS(clone),
+        1,
+        SCMP_A0(SCMP_CMP_MASKED_EQ, CLONE_NEWUSER, CLONE_NEWUSER)
+    );
+    
+    if (filter_set_status) {
+        
+        if (seccomp_ctx) {
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not add KILL rule 'clone': %m\n");
+        return EXIT_FAILURE;
+    }
+    
+    filter_set_status = seccomp_attr_set(seccomp_ctx, SCMP_FLTATR_CTL_NNP, 0);
+    
+    if (filter_set_status){
+        if (seccomp_ctx){
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not set attribute 'SCMP_FLTATR_CTL_NNP'; %m\n");
+        return EXIT_FAILURE;
+    }
+    
+    filter_set_status = seccomp_load(seccomp_ctx);
+    if (filter_set_status){
+        if (seccomp_ctx){
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not load the new context: %m\n");
+        return EXIT_FAILURE;
+    }
+
     return 0;
 }
 
