@@ -192,6 +192,36 @@ int setup_syscall_filters()
         return EXIT_FAILURE;
     }
 
+    filter_set_status = seccomp_rule_add(seccomp_ctx, SCMP_FAIL, SCMP_SYS(migrate_pages), 0);
+    
+    if (filter_set_status) {
+        
+        if (seccomp_ctx) {
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not add KILL rule for 'migrate_pages': %m\n");
+        return EXIT_FAILURE;   
+    }
+
+    filter_set_status = seccomp_attr_set(seccomp_ctx, SCMP_FLTATR_CTL_NNP, 0);
+    
+    if (filter_set_status){
+        if (seccomp_ctx){
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not set attribute 'SCMP_FLTATR_CTL_NNP'; %m\n");
+        return EXIT_FAILURE;
+    }
+    
+    filter_set_status = seccomp_load(seccomp_ctx);
+    if (filter_set_status){
+        if (seccomp_ctx){
+            seccomp_release(seccomp_ctx);
+        }
+        fprintf(stderr, "seccomp could not load the new context: %m\n");
+        return EXIT_FAILURE;
+    }
+
     filter_set_status = seccomp_rule_add(
         seccomp_ctx,
         SCMP_FAIL,
